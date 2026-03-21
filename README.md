@@ -161,6 +161,7 @@ Behavior:
 - Maximum 4 images per page
 - Images are arranged in a 2x2 grid
 - Filenames are shown as small captions below each image
+- If no evidence images are found, the script still generates the invoice PDF and simply skips the evidence pages
 
 ## Running the Script
 
@@ -298,13 +299,9 @@ Compare your Excel columns with the required format above.
 
 ### No image files found in the evidence folder
 
-Cause:
+Current behavior:
 
-The evidence folder is empty or contains unsupported file types only.
-
-Fix:
-
-Add supported image files to the evidence folder.
+The invoice PDF is still generated. The script just skips the evidence pages.
 
 ### Black square instead of `₱`
 

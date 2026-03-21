@@ -251,19 +251,17 @@ def load_invoice_data(excel_path: Path) -> tuple[dict, list[dict]]:
 
 
 def get_image_files(evidence_folder: Path) -> list[Path]:
-    """Collect supported image files from the evidence folder."""
-    require_folder(evidence_folder, "Evidence folder")
+    """Collect supported image files from the evidence folder if it exists."""
+    if not evidence_folder.exists():
+        return []
+    if not evidence_folder.is_dir():
+        raise NotADirectoryError(f"Evidence folder is not a folder: {evidence_folder}")
 
     image_files = sorted(
         path
         for path in evidence_folder.iterdir()
         if path.is_file() and path.suffix.lower() in SUPPORTED_IMAGE_EXTENSIONS
     )
-    if not image_files:
-        raise ValueError(
-            "No image files found in the evidence folder. "
-            "Supported formats: .jpg, .jpeg, .png, .webp, .bmp"
-        )
     return image_files
 
 
@@ -829,7 +827,8 @@ def generate_invoice_pdf(excel_path: Path, evidence_folder: Path, output_pdf_pat
 
     pdf = canvas.Canvas(str(output_pdf_path), pagesize=A4)
     invoice_page_count = draw_invoice_pages(pdf, invoice_data, line_items)
-    draw_evidence_pages(pdf, image_files, starting_page_number=invoice_page_count + 1)
+    if image_files:
+        draw_evidence_pages(pdf, image_files, starting_page_number=invoice_page_count + 1)
     pdf.save()
 
     return output_pdf_path
