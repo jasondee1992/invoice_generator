@@ -38,6 +38,17 @@ def get_base_dir() -> Path:
     return Path(__file__).resolve().parent
 
 
+def get_asset_search_dirs() -> list[Path]:
+    """Return folders that may contain optional bundled assets."""
+    search_dirs = [get_base_dir()]
+    bundled_dir = getattr(sys, "_MEIPASS", None)
+    if bundled_dir:
+        bundled_path = Path(bundled_dir)
+        if bundled_path not in search_dirs:
+            search_dirs.append(bundled_path)
+    return search_dirs
+
+
 def resolve_input_path(path_value: str) -> Path:
     """Resolve input paths relative to the script/exe folder."""
     path = Path(path_value)
@@ -67,9 +78,12 @@ def notify_user(title: str, message: str, is_error: bool = False) -> None:
 
 
 def get_existing_asset_path(relative_path: Path) -> Path | None:
-    """Return an asset path if it exists."""
-    logo_path = get_base_dir() / relative_path
-    return logo_path if logo_path.exists() and logo_path.is_file() else None
+    """Return an asset path if it exists in any supported asset location."""
+    for base_dir in get_asset_search_dirs():
+        asset_path = base_dir / relative_path
+        if asset_path.exists() and asset_path.is_file():
+            return asset_path
+    return None
 
 
 def build_logo_reader(
@@ -100,12 +114,15 @@ def draw_page_watermark(pdf: canvas.Canvas) -> None:
     if not logo_path:
         return
 
-    watermark = build_logo_reader(
-        logo_path,
-        max_size=(520, 520),
-        opacity=38,
-        blur_radius=1.8,
-    )
+    try:
+        watermark = build_logo_reader(
+            logo_path,
+            max_size=(520, 520),
+            opacity=38,
+            blur_radius=1.8,
+        )
+    except Exception:
+        return
     width = WATERMARK_DRAW_WIDTH
     height = WATERMARK_DRAW_HEIGHT
     x = (PAGE_WIDTH - width) / 2
@@ -137,10 +154,13 @@ def draw_header_logo(
     if not logo_path:
         return
 
-    logo = build_logo_reader(
-        logo_path,
-        max_size=(260, 260),
-    )
+    try:
+        logo = build_logo_reader(
+            logo_path,
+            max_size=(260, 260),
+        )
+    except Exception:
+        return
 
     pdf.saveState()
     pdf.drawImage(
