@@ -12,12 +12,14 @@ Python script for generating a professional invoice PDF from Excel data and an e
 - Repeats the invoice table header on continuation pages
 - Moves `Subtotal`, `Total`, and `Payment Details` to the final invoice page only
 - Uses configurable input and output paths
+- Can be packaged as a Windows `.exe` for double-click use
 
 ## Project Structure
 
 ```text
 invoice_generator/
 ├─ generate_invoice.py
+├─ build_exe.bat
 ├─ requirements.txt
 ├─ README.md
 ├─ data/
@@ -178,6 +180,56 @@ Custom paths:
 .\venv\Scripts\python.exe generate_invoice.py --input-excel-path data/invoice_data.xlsx --evidence-folder-path evidences --output-pdf-path output/invoice_output.pdf
 ```
 
+## Windows Executable (.exe)
+
+You can package the script into a Windows executable so users can just double-click it.
+
+### Build the `.exe`
+
+Run:
+
+```powershell
+.\build_exe.bat
+```
+
+This will:
+
+- install `PyInstaller` inside the project virtual environment
+- build `InvoiceGenerator.exe`
+- place the `.exe` in the project root
+
+After build, your project can look like this:
+
+```text
+invoice_generator/
+├─ InvoiceGenerator.exe
+├─ data/
+├─ evidences/
+└─ output/
+```
+
+### Use the `.exe`
+
+1. Put the Excel file in `data/invoice_data.xlsx`
+2. Put evidence images in `evidences/`
+3. Double-click `InvoiceGenerator.exe`
+4. The PDF will be generated in `output/invoice_output.pdf`
+
+Important:
+
+- the `.exe` uses paths relative to its own folder
+- keep `data/`, `evidences/`, and `output/` beside the `.exe`
+- if an error happens, the packaged app shows a popup message
+
+### Sharing with Others
+
+If someone clones the repo, they have two options:
+
+1. Build the `.exe` themselves using `build_exe.bat`
+2. Use a copy of the already-built `InvoiceGenerator.exe`
+
+If you want them to double-click immediately after cloning, you need to include `InvoiceGenerator.exe` in the repo or provide it separately.
+
 ## Command-line Arguments
 
 - `--input-excel-path`
@@ -287,4 +339,3 @@ Main responsibilities inside the script:
 - paginate invoice table rows
 - draw invoice summary and payment section
 - draw evidence image pages
-

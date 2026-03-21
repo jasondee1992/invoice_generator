@@ -1,1 +1,5 @@
 venv
+build/
+InvoiceGenerator.spec
+__pycache__/
+*.spec
