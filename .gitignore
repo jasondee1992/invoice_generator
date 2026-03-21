@@ -1,5 +1,5 @@
 venv
-.idea
+.idea/
 build/
 InvoiceGenerator.spec
 __pycache__/
