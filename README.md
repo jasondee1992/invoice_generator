@@ -20,6 +20,8 @@ Python script for generating a professional invoice PDF from Excel data and an e
 invoice_generator/
 ├─ generate_invoice.py
 ├─ build_exe.bat
+├─ icon/
+│  └─ icon.png
 ├─ requirements.txt
 ├─ README.md
 ├─ data/
@@ -195,6 +197,7 @@ Run:
 This will:
 
 - install `PyInstaller` inside the project virtual environment
+- convert `icon/icon.png` into `icon/icon.ico`
 - build `InvoiceGenerator.exe`
 - place the `.exe` in the project root
 
@@ -220,6 +223,7 @@ Important:
 - the `.exe` uses paths relative to its own folder
 - keep `data/`, `evidences/`, and `output/` beside the `.exe`
 - if an error happens, the packaged app shows a popup message
+- the executable icon comes from `icon/icon.png`
 
 ### Sharing with Others
 
