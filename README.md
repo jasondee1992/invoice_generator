@@ -11,6 +11,8 @@ Python script for generating a professional invoice PDF from Excel data and an e
 - Preserves image aspect ratio
 - Repeats the invoice table header on continuation pages
 - Moves `Subtotal`, `Total`, and `Payment Details` to the final invoice page only
+- Supports optional header logo and page watermark images
+- Still generates the PDF even if the `logo/` folder is empty
 - Uses configurable input and output paths
 - Can be packaged as a Windows `.exe` for double-click use
 
@@ -18,20 +20,23 @@ Python script for generating a professional invoice PDF from Excel data and an e
 
 ```text
 invoice_generator/
-├─ generate_invoice.py
-├─ build_exe.bat
-├─ icon/
-│  └─ icon.png
-├─ requirements.txt
-├─ README.md
-├─ data/
-│  └─ invoice_data.xlsx
-├─ evidences/
-│  ├─ image1.jpg
-│  ├─ image2.png
-│  └─ ...
-└─ output/
-   └─ invoice_output.pdf
+|-- generate_invoice.py
+|-- build_exe.bat
+|-- icon/
+|   `-- icon.png
+|-- logo/
+|   |-- Logo.png
+|   `-- watermark_logo.png
+|-- requirements.txt
+|-- README.md
+|-- data/
+|   `-- invoice_data.xlsx
+|-- evidences/
+|   |-- image1.jpg
+|   |-- image2.png
+|   `-- ...
+`-- output/
+    `-- invoice_output.pdf
 ```
 
 ## Requirements
@@ -163,6 +168,26 @@ Behavior:
 - Filenames are shown as small captions below each image
 - If no evidence images are found, the script still generates the invoice PDF and simply skips the evidence pages
 
+## Logo and Watermark
+
+Optional logo assets can be placed in the `logo/` folder:
+
+- `logo/Logo.png` for the header logo on the invoice page
+- `logo/watermark_logo.png` for the faint page watermark
+
+Important:
+
+- The filenames are case-sensitive in the app logic
+- Use the exact names `Logo.png` and `watermark_logo.png`
+
+Behavior:
+
+- If both files exist, the invoice page shows the logo and watermark
+- If one file is missing, only the available asset is used
+- If the `logo/` folder is empty, the script still generates the PDF and simply skips both the header logo and the watermark
+
+If you want to remove the logo and watermark from the generated PDF, just leave the `logo/` folder empty.
+
 ## Running the Script
 
 Default run:
@@ -206,10 +231,10 @@ After build, your project can look like this:
 
 ```text
 invoice_generator/
-├─ InvoiceGenerator.exe
-├─ data/
-├─ evidences/
-└─ output/
+|-- InvoiceGenerator.exe
+|-- data/
+|-- evidences/
+`-- output/
 ```
 
 ### Use the `.exe`
@@ -225,6 +250,7 @@ Important:
 - keep `data/`, `evidences/`, and `output/` beside the `.exe`
 - if an error happens, the packaged app shows a popup message
 - the executable icon comes from `icon/icon.png`
+- you can leave `logo/` empty if you want the PDF without a header logo and watermark
 
 ### Sharing with Others
 
@@ -270,7 +296,7 @@ Examples:
 
 Note:
 
-Using the actual peso sign `₱` may show as a square if the default PDF font does not support it. If that happens, use `Php` or `PHP` unless the script is updated to use a Unicode font.
+Using the actual peso sign `PHP` may show better than a peso symbol if the default PDF font does not support it.
 
 ## Common Errors
 
@@ -303,7 +329,13 @@ Current behavior:
 
 The invoice PDF is still generated. The script just skips the evidence pages.
 
-### Black square instead of `₱`
+### Empty logo folder
+
+Current behavior:
+
+The invoice PDF is still generated. The script just skips the header logo and page watermark.
+
+### Black square instead of peso symbol
 
 Cause:
 
